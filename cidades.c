@@ -189,3 +189,50 @@ Estrada *getEstrada(const char *nomeArquivo)
 
     return E;
 }
+
+double calcularMenorVizinhanca(const char *nomeArquivo) {
+    Estrada *E = getEstrada(nomeArquivo);
+    if (E == NULL) {
+        return -1.0; 
+    }
+
+    double menorVizinhanca = (double)(E->T); 
+
+    Cidade *atual = E->Inicio;
+    while (atual != NULL && atual->Proximo != NULL) {
+        double vizinhanca = (double)(atual->Proximo->Posicao - atual->Posicao);
+        if (vizinhanca < menorVizinhanca) {
+            menorVizinhanca = vizinhanca;
+        }
+        atual = atual->Proximo;
+    }
+
+    liberarEstrada(E);
+    return menorVizinhanca;
+}
+
+char *cidadeMenorVizinhanca(const char *nomeArquivo) {
+    Estrada *E = getEstrada(nomeArquivo);
+    if (E == NULL) {
+        return NULL; 
+    }
+
+    double menorVizinhanca = (double)(E->T); 
+    char *cidadeMenorVizinhanca = NULL;
+
+    Cidade *atual = E->Inicio;
+    while (atual != NULL && atual->Proximo != NULL) {
+        double vizinhanca = (double)(atual->Proximo->Posicao - atual->Posicao);
+        if (vizinhanca < menorVizinhanca) {
+            menorVizinhanca = vizinhanca;
+            cidadeMenorVizinhanca = (char *)malloc((strlen(atual->Nome) + 1) * sizeof(char));
+            if (cidadeMenorVizinhanca != NULL) {
+                strcpy(cidadeMenorVizinhanca, atual->Nome);
+            }
+        }
+        atual = atual->Proximo;
+    }
+
+    liberarEstrada(E);
+    return cidadeMenorVizinhanca;
+}

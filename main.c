@@ -65,12 +65,34 @@ int main(void) {
     imprimirEstrada(E2);
     liberarEstradaTeste(E2);
 
+    // teste calcularMenorVizinhanca
+    total++;
+    double menor1 = calcularMenorVizinhanca("Teste01.txt");
+    if (menor1 == 3.0) { 
+        printf("Menor vizinhança: %.1f\n", menor1);
+        passou++;
+    } else {
+        printf("Não foi possível calcular a menor vizinhança corretamente\n");
+    }
+
+    // teste cidadeMenorVizinhanca 
+    total++;
+    char *cidade1 = cidadeMenorVizinhanca("Teste01.txt");
+    if (cidade1 != NULL && strcmp(cidade1, "Birnin S'Yan") == 0) {
+        printf("Cidade: %s\n", cidade1);
+        passou++;
+        free(cidade1);
+    } else {
+        printf("ERRO\n", 
+               cidade1 ? cidade1 : "NULL");
+        if (cidade1) free(cidade1);
+    }
+
     // inválido (opcional): Xi fora do intervalo ou duplicado → deve retornar NULL
     total++;
     Estrada *Ei = getEstrada("testes/invalido_Xi_fora.txt");
     if (Ei == NULL) { puts("[OK] invalido_Xi_fora: retornou NULL"); passou++; }
     else { puts("[FAIL] invalido_Xi_fora: deveria ser NULL"); liberarEstradaTeste(Ei); }
 
-    printf("\nResumo: %d/%d testes passaram.\n", passou, total);
-    return 0;
+    
 }
