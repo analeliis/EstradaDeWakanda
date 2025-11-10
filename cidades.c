@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "cidades.h"
 
 // essa função serve para liberar toda a memória da estrada
@@ -193,18 +194,56 @@ Estrada *getEstrada(const char *nomeArquivo)
 double calcularMenorVizinhanca(const char *nomeArquivo) {
     Estrada *E = getEstrada(nomeArquivo);
     if (E == NULL) {
-        return -1.0; 
+        return -1.0;
     }
 
-    double menorVizinhanca = (double)(E->T); 
-
-    Cidade *atual = E->Inicio;
-    while (atual != NULL && atual->Proximo != NULL) {
-        double vizinhanca = (double)(atual->Proximo->Posicao - atual->Posicao);
-        if (vizinhanca < menorVizinhanca) {
-            menorVizinhanca = vizinhanca;
+    double menorVizinhanca = (double)E->T;
+    
+    Cidade *cidade = E->Inicio;
+    while (cidade != NULL) {
+        double distEsquerda = (double)E->T;
+        double distDireita = (double)E->T;
+        
+        // Encontrar o vizinho mais próximo à esquerda
+        Cidade *vizinho = E->Inicio;
+        while (vizinho != NULL) {
+            if (vizinho->Posicao < cidade->Posicao) {
+                double dist = (double)(cidade->Posicao - vizinho->Posicao);
+                if (dist < distEsquerda) {
+                    distEsquerda = dist;
+                }
+            }
+            vizinho = vizinho->Proximo;
         }
-        atual = atual->Proximo;
+        
+        if (distEsquerda == (double)E->T) {
+            distEsquerda = (double)cidade->Posicao;
+        }
+        
+        // Encontrar o vizinho mais próximo à direita
+        vizinho = E->Inicio;
+        while (vizinho != NULL) {
+            if (vizinho->Posicao > cidade->Posicao) {
+                double dist = (double)(vizinho->Posicao - cidade->Posicao);
+                if (dist < distDireita) {
+                    distDireita = dist;
+                }
+            }
+            vizinho = vizinho->Proximo;
+        }
+        
+        if (distDireita == (double)E->T) {
+            distDireita = (double)(E->T - cidade->Posicao);
+        }
+        
+        // Vizinhança é a média das distâncias mais 1.0
+        double vizinhancaCidade = (distEsquerda + distDireita) / 2.0 + 1.0;
+        
+        if (vizinhancaCidade < menorVizinhanca) {
+            menorVizinhanca = vizinhancaCidade;
+        }
+        
+        cidade = cidade->Proximo;
     }
 
     liberarEstrada(E);
@@ -214,25 +253,65 @@ double calcularMenorVizinhanca(const char *nomeArquivo) {
 char *cidadeMenorVizinhanca(const char *nomeArquivo) {
     Estrada *E = getEstrada(nomeArquivo);
     if (E == NULL) {
-        return NULL; 
+        return NULL;
     }
 
-    double menorVizinhanca = (double)(E->T); 
-    char *cidadeMenorVizinhanca = NULL;
-
-    Cidade *atual = E->Inicio;
-    while (atual != NULL && atual->Proximo != NULL) {
-        double vizinhanca = (double)(atual->Proximo->Posicao - atual->Posicao);
-        if (vizinhanca < menorVizinhanca) {
-            menorVizinhanca = vizinhanca;
-            cidadeMenorVizinhanca = (char *)malloc((strlen(atual->Nome) + 1) * sizeof(char));
-            if (cidadeMenorVizinhanca != NULL) {
-                strcpy(cidadeMenorVizinhanca, atual->Nome);
+    double menorVizinhanca = (double)E->T;
+    char *nomeCidade = NULL;
+    
+    Cidade *cidade = E->Inicio;
+    while (cidade != NULL) {
+        double distEsquerda = (double)E->T;
+        double distDireita = (double)E->T;
+        
+        // Encontrar o vizinho mais próximo à esquerda
+        Cidade *vizinho = E->Inicio;
+        while (vizinho != NULL) {
+            if (vizinho->Posicao < cidade->Posicao) {
+                double dist = (double)(cidade->Posicao - vizinho->Posicao);
+                if (dist < distEsquerda) {
+                    distEsquerda = dist;
+                }
+            }
+            vizinho = vizinho->Proximo;
+        }
+        
+        if (distEsquerda == (double)E->T) {
+            distEsquerda = (double)cidade->Posicao;
+        }
+        
+        // Encontrar o vizinho mais próximo à direita
+        vizinho = E->Inicio;
+        while (vizinho != NULL) {
+            if (vizinho->Posicao > cidade->Posicao) {
+                double dist = (double)(vizinho->Posicao - cidade->Posicao);
+                if (dist < distDireita) {
+                    distDireita = dist;
+                }
+            }
+            vizinho = vizinho->Proximo;
+        }
+        
+        if (distDireita == (double)E->T) {
+            distDireita = (double)(E->T - cidade->Posicao);
+        }
+        
+        double vizinhancaCidade = (distEsquerda + distDireita) / 2.0 + 1.0;
+        
+        if (vizinhancaCidade < menorVizinhanca) {
+            menorVizinhanca = vizinhancaCidade;
+            if (nomeCidade != NULL) {
+                free(nomeCidade);
+            }
+            nomeCidade = (char *)malloc(strlen(cidade->Nome) + 1);
+            if (nomeCidade != NULL) {
+                strcpy(nomeCidade, cidade->Nome);
             }
         }
-        atual = atual->Proximo;
+        
+        cidade = cidade->Proximo;
     }
 
     liberarEstrada(E);
-    return cidadeMenorVizinhanca;
+    return nomeCidade;
 }

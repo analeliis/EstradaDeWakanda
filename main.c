@@ -65,34 +65,59 @@ int main(void) {
     imprimirEstrada(E2);
     liberarEstradaTeste(E2);
 
-    // teste calcularMenorVizinhanca
+    // teste calcularMenorVizinhanca 1
     total++;
     double menor1 = calcularMenorVizinhanca("Teste01.txt");
-    if (menor1 == 3.0) { 
-        printf("Menor vizinhança: %.1f\n", menor1);
+    if (menor1 == 3.5) { 
+        printf("[OK] Menor vizinhança Teste01: %.1f\n", menor1);
         passou++;
     } else {
-        printf("Não foi possível calcular a menor vizinhança corretamente\n");
+        printf("[FAIL] Menor vizinhança Teste01: %.1f (esperado 3.5)\n", menor1);
     }
 
-    // teste cidadeMenorVizinhanca 
+    // teste calcularMenorVizinhanca 2
+    total++;
+    double menor2 = calcularMenorVizinhanca("Teste02.txt");
+    if (menor2 == 3.5) { 
+        printf("[OK] Menor vizinhança Teste02: %.1f\n", menor2);
+        passou++;
+    } else {
+        printf("[FAIL] Menor vizinhança Teste02: %.1f (esperado 3.5)\n", menor2);
+    }
+
+    // teste cidadeMenorVizinhanca 1
     total++;
     char *cidade1 = cidadeMenorVizinhanca("Teste01.txt");
-    if (cidade1 != NULL && strcmp(cidade1, "Birnin S'Yan") == 0) {
-        printf("Cidade: %s\n", cidade1);
+    if (cidade1 != NULL && strcmp(cidade1, "Birnin Zana") == 0) {
+        printf("[OK] Cidade Teste01: %s\n", cidade1);
         passou++;
         free(cidade1);
     } else {
-        printf("ERRO\n", 
+        printf("[FAIL] Cidade Teste01: %s (esperado Birnin Zana)\n", 
                cidade1 ? cidade1 : "NULL");
         if (cidade1) free(cidade1);
     }
 
+    // teste cidadeMenorVizinhanca 2
+    total++;
+    char *cidade2 = cidadeMenorVizinhanca("Teste02.txt");
+    if (cidade2 != NULL && strcmp(cidade2, "L'pur") == 0) {
+        printf("[OK] Cidade Teste02: %s\n", cidade2);
+        passou++;
+        free(cidade2);
+    } else {
+        printf("[FAIL] Cidade Teste02: %s (esperado L'pur)\n", 
+               cidade2 ? cidade2 : "NULL");
+        if (cidade2) free(cidade2);
+    }
+
+    
     // inválido (opcional): Xi fora do intervalo ou duplicado → deve retornar NULL
     total++;
     Estrada *Ei = getEstrada("testes/invalido_Xi_fora.txt");
     if (Ei == NULL) { puts("[OK] invalido_Xi_fora: retornou NULL"); passou++; }
     else { puts("[FAIL] invalido_Xi_fora: deveria ser NULL"); liberarEstradaTeste(Ei); }
 
-    
+    printf("\nResumo: %d/%d testes passaram.\n", passou, total);
+    return 0;
 }
